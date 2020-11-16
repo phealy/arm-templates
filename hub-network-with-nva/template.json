@@ -238,7 +238,7 @@
                         }
                     },
                     "imageReference": {
-                        "id": "/subscriptions/0f7710f5-70d5-444c-aaf1-a59dc913dbc4/resourceGroups/rg-images-eastus/providers/Microsoft.Compute/galleries/pahealy/images/vyos"
+                        "id": "/subscriptions/0f7710f5-70d5-444c-aaf1-a59dc913dbc4/resourceGroups/rg-admin-images-eastus/providers/Microsoft.Compute/galleries/pahealy/images/vyos"
                     },
                     "dataDisks": []
                 },

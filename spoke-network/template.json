@@ -260,6 +260,11 @@
                                         "[variables('spokeVnetAddressSpace')]"
                                     ]
                                 },
+                                "dhcpOptions": {
+                                    "dnsServers": [
+                                        "[parameters('hubVnetFirewallIpAddress')]"
+                                    ]
+                                },
                                 "subnets": [
                                     {
                                         "name": "[variables('spokeVnetDefaultSubnetName')]",
