@@ -14,7 +14,6 @@
         "addressSpaceFirewallPublic": "[concat('10.', parameters('secondOctet'),'.254.0/24')]",
         "addressSpaceFirewallPrivate": "[concat('10.', parameters('secondOctet'),'.255.0/24')]",
         "addressSpaceDefault": "[concat('10.', parameters('secondOctet'),'.0.0/24')]",
-        //"disks_fw_vyos_disk_name": "[concat('fw-', resourceGroup().location, '-vyos-disk')]",
         "fwPublicIP": "[concat('10.', parameters('secondOctet'),'.254.4')]",
         "fwPrivateIP": "[concat('10.', parameters('secondOctet'),'.255.4')]",
         "networkInterfaces_fw_nic_private_name": "[concat('fw-', resourceGroup().location, '-nic-private')]",
@@ -249,26 +248,6 @@
                 "destinationAddressPrefixes": []
             }
         },
-//        {
-//            "type": "Microsoft.Compute/disks",
-//            "apiVersion": "2020-06-30",
-//            "name": "[variables('disks_fw_vyos_disk_name')]",
-//            "location": "[resourceGroup().location]",
-//            "sku": {
-//                "name": "Premium_LRS"
-//            },
-//            "properties": {
-//                "osType": "Linux",
-//                "hyperVGeneration": "V2",
-//                "creationData": {
-//                    "createOption": "Copy",
-//                    "galleryImageReference": {
-//                        "id": "/subscriptions/0f7710f5-70d5-444c-aaf1-a59dc913dbc4/resourceGroups/RG-IMAGES-EASTUS/providers/Microsoft.Compute/images/vyos-2020.10.19"
-//                    }
-//                },
-//                "diskSizeGB": 4
-//            }
-//        },
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2020-06-01",
