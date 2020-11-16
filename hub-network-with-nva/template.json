@@ -18,7 +18,6 @@
         "fwPrivateIP": "[concat('10.', parameters('secondOctet'),'.255.4')]",
         "networkInterfaces_fw_nic_private_name": "[concat('fw-', resourceGroup().location, '-nic-private')]",
         "networkInterfaces_fw_nic_public_name": "[concat('fw-', resourceGroup().location, '-nic-public')]",
-        "networkSecurityGroups_nsg_snet_firewall_private_001_name": "[concat('nsg-snet-firewall-private-', resourceGroup().location, '-001')]",
         "networkSecurityGroups_nsg_snet_firewall_public_001_name": "[concat('nsg-snet-firewall-public-', resourceGroup().location, '-001')]",
         "publicIPAddresses_fw_pip_name": "[concat('fw-', resourceGroup().location, '-pip')]",
         "routeTables_rt_firewall_internet_name": "[concat('rt-firewall-internet-', resourceGroup().location, '')]",
@@ -28,37 +27,6 @@
         "virtualNetworks_vnet_hub_name": "[concat('vnet-hub-', resourceGroup().location, '')]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[variables('networkSecurityGroups_nsg_snet_firewall_private_001_name')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "securityRules": [
-                    {
-                        "name": "Allow_all_forwarding",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 2000,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [
-                                "10.0.0.0/8",
-                                "172.16.0.0/12",
-                                "192.168.0.0/16",
-                                "100.64.0.0/10"
-                            ],
-                            "destinationAddressPrefixes": []
-                        }
-                    }
-                ]
-            }
-        },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-05-01",
@@ -356,14 +324,11 @@
             "apiVersion": "2020-05-01",
             "name": "[concat(variables('virtualNetworks_vnet_hub_name'), '/snet-firewall-private-', resourceGroup().location)]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_vnet_hub_name'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_nsg_snet_firewall_private_001_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_vnet_hub_name'))]"
             ],
             "properties": {
                 "addressPrefix": "[variables('addressSpaceFirewallPrivate')]",
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_nsg_snet_firewall_private_001_name'))]"
-                },
+                "networkSecurityGroup": {},
                 "serviceEndpoints": [],
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
@@ -395,7 +360,6 @@
             "name": "[variables('virtualNetworks_vnet_hub_name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_nsg_snet_firewall_private_001_name'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_nsg_snet_firewall_public_001_name'))]",
                 "[resourceId('Microsoft.Network/routeTables', variables('routeTables_rt_firewall_name'))]"
             ],
@@ -415,9 +379,7 @@
                         "name": "[concat('snet-firewall-private-', resourceGroup().location)]",
                         "properties": {
                             "addressPrefix": "[variables('addressSpaceFirewallPrivate')]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_nsg_snet_firewall_private_001_name'))]"
-                            },
+                            "networkSecurityGroup": {},
                             "serviceEndpoints": [],
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
