@@ -1,0 +1,196 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "spokeName": {
+            "type": "String"
+        },
+        "spokeVnetSecondOctet": {
+            "type": "string"
+        },
+        "spokeVnetAddressSpace": {
+            "type": "string",
+            "defaultValue": "[concat('10.', parameters('spokeVnetSecondOctet'), '.0.0/16')]"
+        },
+        "spokeVnetDefaultSubnetPrefix": {
+            "type": "string",
+            "defaultValue": "[concat('10.', parameters('spokeVnetSecondOctet'), '.0.0/24')]"
+        },
+        "hubVnetSubscriptionId": {
+            "type": "string"
+        },
+        "hubVnetResourceGroup": {
+            "type": "string",
+            "defaultValue": "[concat('rg-network-hub-', resourceGroup().location)]"
+        },
+        "hubVnetName": {
+            "type": "string",
+            "defaultValue": "[concat('vnet-hub-', resourceGroup().location)]"
+        },
+        "hubVnetFirewallIpAddress": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "defaultSubnetName": "[concat('snet-', parameters('spokeName'), '-default-', resourceGroup().location)]",
+        "hubVnetId": "[resourceId(parameters('hubVnetSubscriptionId'), parameters('hubVnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('hubVnetName'))]",
+        "internalRouteTableId": "[resourceId('Microsoft.Network/routeTables', variables('internalRouteTableName'))]",
+        "internalRouteTableName": "[concat('rt-',parameters('spokeName'),'-firewall-',resourceGroup().location)]",
+        "internetRouteTableId": "[resourceId('Microsoft.Network/routeTables', variables('internetRouteTableName'))]",
+        "internetRouteTableName": "[concat('rt-',parameters('spokeName'),'-firewall-internet-',resourceGroup().location)]",
+        "spokeNameInitialCaps": "[concat(toUpper(first(parameters('spokeName'))), toLower(skip(parameters('spokeName'), 1)))]",
+        "spokeVnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('spokeVnetName'))]",
+        "spokeVnetName": "[concat('vnet-', parameters('spokeName'), '-', resourceGroup().location)]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('internalRouteTableName')]",
+            "location": "eastus",
+            "properties": {
+                "disableBgpRoutePropagation": true,
+                "routes": [
+                    {
+                        "name": "DefaultViaFirewall",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[parameters('hubVnetFirewallIpAddress')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('internetRouteTableName')]",
+            "location": "eastus",
+            "properties": {
+                "disableBgpRoutePropagation": true,
+                "routes": [
+                    {
+                        "name": "RFC1918-10-ViaFirewall",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/8",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[parameters('hubVnetFirewallIpAddress')]"
+                        }
+                    },
+                    {
+                        "name": "RFC1918-172-ViaFirewall",
+                        "properties": {
+                            "addressPrefix": "172.16.0.0/12",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[parameters('hubVnetFirewallIpAddress')]"
+                        }
+                    },
+                    {
+                        "name": "RFC1918-192-ViaFirewall",
+                        "properties": {
+                            "addressPrefix": "192.168.0.0/16",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[parameters('hubVnetFirewallIpAddress')]"
+                        }
+                    },
+                    {
+                        "name": "RFC6598ViaFirewall",
+                        "properties": {
+                            "addressPrefix": "100.64.0.0/10",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[parameters('hubVnetFirewallIpAddress')]"
+                        }
+                    },
+                    {
+                        "name": "DefaultViaInternet",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopType": "Internet"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('spokeVnetName')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[variables('internalRouteTableId')]",
+                "[variables('internetRouteTableId')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('spokeVnetAddressSpace')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('defaultSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('spokeVnetDefaultSubnetPrefix')]",
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('internalRouteTableName'))]"
+                            },
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('spokeVnetName'), '/', parameters('hubVnetName'))]",
+            "properties": {
+                "remoteVirtualNetwork": {
+                    "id": "[variables('hubVnetId')]"
+                },
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "[concat('deployHubTo', variables('spokeNameInitialCaps'), 'Peering')]",
+            "subscriptionId": "[parameters('hubVnetSubscriptionId')]",
+            "resourceGroup": "[parameters('hubVnetResourceGroup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('spokeVnetName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                            "apiVersion": "2020-05-01",
+                            "name": "[concat(parameters('hubVnetName'), '/', variables('spokeVnetName'))]",
+                            "properties": {
+                                "remoteVirtualNetwork": {
+                                    "id": "[variables('spokeVnetId')]"
+                                },
+                                "allowVirtualNetworkAccess": true,
+                                "allowForwardedTraffic": false,
+                                "allowGatewayTransit": false,
+                                "useRemoteGateways": false
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
