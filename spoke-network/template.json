@@ -20,7 +20,7 @@
         }
     },
     "variables": {
-        "networkWatcherRG": "[concat('rg-network-watchers-', parameters('spokeName'), '-global')]",
+        "networkWatcherRG": "[concat('rg-networkwatchers-', parameters('spokeName'), '-global')]",
         "spokeVnetRG": "[concat('rg-network-', parameters('spokeName'), '-', parameters('location'))]"
     },
     "resources": [
