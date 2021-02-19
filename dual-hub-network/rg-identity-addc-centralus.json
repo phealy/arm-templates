@@ -1,0 +1,107 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "networkInterfaces_identity01332_name": {
+      "defaultValue": "identity01332",
+      "type": "String"
+    },
+    "virtualMachines_identity01_name": {
+      "defaultValue": "identity01",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_identity_centralus_externalid": {
+      "defaultValue": "/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-identity-addc-centralus/providers/Microsoft.Network/networkInterfaces/identity01332'.",
+      "location": "centralus",
+      "name": "[parameters('networkInterfaces_identity01332_name')]",
+      "properties": {
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "10.96.16.4",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(parameters('virtualNetworks_vnet_identity_centralus_externalid'), '/subnets/snet-identity-default-centralus')]"
+              }
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-identity-addc-centralus/providers/Microsoft.Compute/virtualMachines/identity01'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_identity01332_name'))]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('virtualMachines_identity01_name')]",
+      "properties": {
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_B1s"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_identity01332_name'))]"
+            }
+          ]
+        },
+        "osProfile": {
+          "adminUsername": "pahealy",
+          "allowExtensionOperations": true,
+          "computerName": "[parameters('virtualMachines_identity01_name')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "provisionVMAgent": true
+          },
+          "requireGuestProvisionSignal": true,
+          "secrets": []
+        },
+        "storageProfile": {
+          "dataDisks": [],
+          "imageReference": {
+            "offer": "UbuntuServer",
+            "publisher": "Canonical",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diskSizeGB": 30,
+            "managedDisk": {
+              "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_identity01_name'), '_OsDisk_1_ed0b17aa27b64c228a4d01368f554711'))]",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "[concat(parameters('virtualMachines_identity01_name'), '_OsDisk_1_ed0b17aa27b64c228a4d01368f554711')]",
+            "osType": "Linux"
+          }
+        }
+      },
+      "type": "Microsoft.Compute/virtualMachines"
+    }
+  ],
+  "variables": {}
+}

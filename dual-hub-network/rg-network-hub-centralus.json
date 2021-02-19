@@ -1,0 +1,809 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "azureFirewalls_afw_hub_centralus_name": {
+      "defaultValue": "afw-hub-centralus",
+      "type": "String"
+    },
+    "bastionHosts_bst_hub_centralus_name": {
+      "defaultValue": "bst-hub-centralus",
+      "type": "String"
+    },
+    "connections_vpn_cn_home_phealy_com_eastus_name": {
+      "defaultValue": "vpn-cn-home.phealy.com-eastus",
+      "type": "String"
+    },
+    "firewallPolicies_fwpol_hub_centralus_externalid": {
+      "defaultValue": "/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-hub-centralus",
+      "type": "String"
+    },
+    "ipGroups_ipg_privateaddresses_centralus_name": {
+      "defaultValue": "ipg-privateaddresses-centralus",
+      "type": "String"
+    },
+    "localNetworkGateways_vpn_lgw_home_phealy_com_centralus_name": {
+      "defaultValue": "vpn-lgw-home.phealy.com-centralus",
+      "type": "String"
+    },
+    "publicIPAddresses_afw_hub_centralus_pip_egress_name": {
+      "defaultValue": "afw-hub-centralus-pip-egress",
+      "type": "String"
+    },
+    "publicIPAddresses_afw_hub_centralus_pip_mgmt_name": {
+      "defaultValue": "afw-hub-centralus-pip-mgmt",
+      "type": "String"
+    },
+    "publicIPAddresses_bst_hub_centralus_pip_name": {
+      "defaultValue": "bst-hub-centralus-pip",
+      "type": "String"
+    },
+    "publicIPAddresses_vpn_vgw_hub_centralus_pip1_name": {
+      "defaultValue": "vpn-vgw-hub-centralus-pip1",
+      "type": "String"
+    },
+    "publicIPAddresses_vpn_vgw_hub_centralus_pip2_name": {
+      "defaultValue": "vpn-vgw-hub-centralus-pip2",
+      "type": "String"
+    },
+    "routeTables_rt_internetonly_centralus_name": {
+      "defaultValue": "rt-internetonly-centralus",
+      "type": "String"
+    },
+    "routeTables_rt_viafirewall_centralus_name": {
+      "defaultValue": "rt-viafirewall-centralus",
+      "type": "String"
+    },
+    "routeTables_rt_vpngateway_centralus_name": {
+      "defaultValue": "rt-vpngateway-centralus",
+      "type": "String"
+    },
+    "virtualNetworkGateways_vpn_vgw_hub_centralus_name": {
+      "defaultValue": "vpn-vgw-hub-centralus",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_hub_centralus_name": {
+      "defaultValue": "vnet-hub-centralus",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_identity_centralus_externalid": {
+      "defaultValue": "/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourcegroups/rg-network-hub-centralus/providers/Microsoft.Network/ipGroups/ipg-privateaddresses-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('ipGroups_ipg_privateaddresses_centralus_name')]",
+      "properties": {
+        "ipAddresses": [
+          "10.0.0.0/8",
+          "172.16.0.0/12",
+          "192.168.0.0/16",
+          "100.64.0.0/10"
+        ]
+      },
+      "type": "Microsoft.Network/ipGroups"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/localNetworkGateways/vpn-lgw-home.phealy.com-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('localNetworkGateways_vpn_lgw_home_phealy_com_centralus_name')]",
+      "properties": {
+        "bgpSettings": {
+          "asn": 65510,
+          "bgpPeeringAddress": "10.0.25.1",
+          "peerWeight": 0
+        },
+        "fqdn": "home.phealy.com",
+        "localNetworkAddressSpace": {
+          "addressPrefixes": [
+            "10.0.25.1/32"
+          ]
+        }
+      },
+      "type": "Microsoft.Network/localNetworkGateways"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/publicIPAddresses/afw-hub-centralus-pip-egress'.",
+      "location": "centralus",
+      "name": "[parameters('publicIPAddresses_afw_hub_centralus_pip_egress_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "20.40.244.142",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/publicIPAddresses/afw-hub-centralus-pip-mgmt'.",
+      "location": "centralus",
+      "name": "[parameters('publicIPAddresses_afw_hub_centralus_pip_mgmt_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "20.40.246.2",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/publicIPAddresses/bst-hub-centralus-pip'.",
+      "location": "centralus",
+      "name": "[parameters('publicIPAddresses_bst_hub_centralus_pip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "52.154.254.150",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/publicIPAddresses/vpn-vgw-hub-centralus-pip1'.",
+      "location": "centralus",
+      "name": "[parameters('publicIPAddresses_vpn_vgw_hub_centralus_pip1_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "52.154.255.191",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/publicIPAddresses/vpn-vgw-hub-centralus-pip2'.",
+      "location": "centralus",
+      "name": "[parameters('publicIPAddresses_vpn_vgw_hub_centralus_pip2_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "52.154.255.135",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-internetonly-centralus'.",
+      "name": "[parameters('routeTables_rt_internetonly_centralus_name')]",
+      "properties": {
+        "disableBgpRoutePropagation": true,
+        "routes": [
+          {
+            "name": "FirewallDefaultRoute",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "Internet"
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/routeTables"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('routeTables_rt_viafirewall_centralus_name')]",
+      "properties": {
+        "disableBgpRoutePropagation": true,
+        "routes": [
+          {
+            "name": "Default",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/routeTables"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-vpngateway-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('routeTables_rt_vpngateway_centralus_name')]",
+      "properties": {
+        "disableBgpRoutePropagation": false,
+        "routes": [
+          {
+            "name": "snet-hub-default-centralus",
+            "properties": {
+              "addressPrefix": "10.96.0.0/24",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          },
+          {
+            "name": "vnet-identity-centralus",
+            "properties": {
+              "addressPrefix": "10.96.16.0/20",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/routeTables"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus/routes/Default'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_viafirewall_centralus_name'), '/Default')]",
+      "properties": {
+        "addressPrefix": "0.0.0.0/0",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-internetonly-centralus/routes/FirewallDefaultRoute'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_internetonly_centralus_name'), '/FirewallDefaultRoute')]",
+      "properties": {
+        "addressPrefix": "0.0.0.0/0",
+        "nextHopType": "Internet"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-vpngateway-centralus/routes/snet-hub-default-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_vpngateway_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_vpngateway_centralus_name'), '/snet-hub-default-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.0.0/24",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/routeTables/rt-vpngateway-centralus/routes/vnet-identity-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_vpngateway_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_vpngateway_centralus_name'), '/vnet-identity-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.16.0/20",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/AzureBastionSubnet'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/AzureBastionSubnet')]",
+      "properties": {
+        "addressPrefix": "10.96.3.64/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/AzureFirewallSubnet'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/AzureFirewallSubnet')]",
+      "properties": {
+        "addressPrefix": "10.96.3.192/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/virtualNetworkPeerings/vnet-identity-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/vnet-identity-centralus')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": true,
+        "allowVirtualNetworkAccess": true,
+        "peeringState": "Connected",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.96.16.0/20"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[parameters('virtualNetworks_vnet_identity_centralus_externalid')]"
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/bastionHosts/bst-hub-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_bst_hub_centralus_pip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'AzureBastionSubnet')]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('bastionHosts_bst_hub_centralus_name')]",
+      "properties": {
+        "dnsName": "bst-3cad4b43-035b-4595-8d2f-ba02d7d0226d.bastion.azure.com",
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_bst_hub_centralus_pip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'AzureBastionSubnet')]"
+              }
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/bastionHosts"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/connections/vpn-cn-home.phealy.com-eastus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_vpn_vgw_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localNetworkGateways_vpn_lgw_home_phealy_com_centralus_name'))]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('connections_vpn_cn_home_phealy_com_eastus_name')]",
+      "properties": {
+        "connectionProtocol": "IKEv2",
+        "connectionType": "IPsec",
+        "dpdTimeoutSeconds": 0,
+        "enableBgp": true,
+        "expressRouteGatewayBypass": false,
+        "ipsecPolicies": [],
+        "localNetworkGateway2": {
+          "id": "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localNetworkGateways_vpn_lgw_home_phealy_com_centralus_name'))]"
+        },
+        "routingWeight": 0,
+        "sharedKey": "2PmjyYZEjYKky0l9wfa7",
+        "trafficSelectorPolicies": [],
+        "useLocalAzureIpAddress": false,
+        "usePolicyBasedTrafficSelectors": false,
+        "virtualNetworkGateway1": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_vpn_vgw_hub_centralus_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/connections"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/AzureFirewallManagementSubnet'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/AzureFirewallManagementSubnet')]",
+      "properties": {
+        "addressPrefix": "10.96.3.0/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/GatewaySubnet'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_vpngateway_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/GatewaySubnet')]",
+      "properties": {
+        "addressPrefix": "10.96.3.128/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_vpngateway_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/snet-hub-default-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/snet-hub-default-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.0.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/snet-hub-pa-mgmt-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/snet-hub-pa-mgmt-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.1.128/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/snet-hub-pa-private-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/snet-hub-pa-private-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.1.0/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus/subnets/snet-hub-pa-public-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_centralus_name'), '/snet-hub-pa-public-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.1.64/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworkGateways/vpn-vgw-hub-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_vpn_vgw_hub_centralus_pip1_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'GatewaySubnet')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_vpn_vgw_hub_centralus_pip2_name'))]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('virtualNetworkGateways_vpn_vgw_hub_centralus_name')]",
+      "properties": {
+        "activeActive": true,
+        "bgpSettings": {
+          "asn": 65515,
+          "bgpPeeringAddress": "10.96.3.132,10.96.3.133",
+          "bgpPeeringAddresses": [
+            {
+              "customBgpIpAddresses": [],
+              "ipconfigurationId": "[concat(resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_vpn_vgw_hub_centralus_name')), '/ipConfigurations/default')]"
+            },
+            {
+              "customBgpIpAddresses": [],
+              "ipconfigurationId": "[concat(resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_vpn_vgw_hub_centralus_name')), '/ipConfigurations/activeActive')]"
+            }
+          ],
+          "peerWeight": 0
+        },
+        "enableBgp": true,
+        "enablePrivateIpAddress": false,
+        "gatewayType": "Vpn",
+        "ipConfigurations": [
+          {
+            "name": "default",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_vpn_vgw_hub_centralus_pip1_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'GatewaySubnet')]"
+              }
+            }
+          },
+          {
+            "name": "activeActive",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_vpn_vgw_hub_centralus_pip2_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'GatewaySubnet')]"
+              }
+            }
+          }
+        ],
+        "sku": {
+          "name": "VpnGw1AZ",
+          "tier": "VpnGw1AZ"
+        },
+        "vpnGatewayGeneration": "Generation1",
+        "vpnType": "RouteBased"
+      },
+      "type": "Microsoft.Network/virtualNetworkGateways"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_vpngateway_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('virtualNetworks_vnet_hub_centralus_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.96.0.0/20"
+          ]
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "name": "AzureFirewallSubnet",
+            "properties": {
+              "addressPrefix": "10.96.3.192/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "AzureBastionSubnet",
+            "properties": {
+              "addressPrefix": "10.96.3.64/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "GatewaySubnet",
+            "properties": {
+              "addressPrefix": "10.96.3.128/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_vpngateway_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          },
+          {
+            "name": "AzureFirewallManagementSubnet",
+            "properties": {
+              "addressPrefix": "10.96.3.0/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          },
+          {
+            "name": "snet-hub-default-centralus",
+            "properties": {
+              "addressPrefix": "10.96.0.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          },
+          {
+            "name": "snet-hub-pa-private-centralus",
+            "properties": {
+              "addressPrefix": "10.96.1.0/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          },
+          {
+            "name": "snet-hub-pa-public-centralus",
+            "properties": {
+              "addressPrefix": "10.96.1.64/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_internetonly_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          },
+          {
+            "name": "snet-hub-pa-mgmt-centralus",
+            "properties": {
+              "addressPrefix": "10.96.1.128/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "name": "vnet-identity-centralus",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": true,
+              "allowVirtualNetworkAccess": true,
+              "peeringState": "Connected",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.96.16.0/20"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[parameters('virtualNetworks_vnet_identity_centralus_externalid')]"
+              },
+              "useRemoteGateways": false
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/azureFirewalls/afw-hub-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_afw_hub_centralus_pip_mgmt_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'AzureFirewallManagementSubnet')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_afw_hub_centralus_pip_egress_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'AzureFirewallSubnet')]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('azureFirewalls_afw_hub_centralus_name')]",
+      "properties": {
+        "additionalProperties": {},
+        "applicationRuleCollections": [],
+        "firewallPolicy": {
+          "id": "[parameters('firewallPolicies_fwpol_hub_centralus_externalid')]"
+        },
+        "ipConfigurations": [
+          {
+            "name": "[concat(parameters('azureFirewalls_afw_hub_centralus_name'), '-pip-egress')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_afw_hub_centralus_pip_egress_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'AzureFirewallSubnet')]"
+              }
+            }
+          }
+        ],
+        "managementIpConfiguration": {
+          "name": "[concat(parameters('azureFirewalls_afw_hub_centralus_name'), '-pip-mgmt')]",
+          "properties": {
+            "publicIPAddress": {
+              "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_afw_hub_centralus_pip_mgmt_name'))]"
+            },
+            "subnet": {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_centralus_name'), 'AzureFirewallManagementSubnet')]"
+            }
+          }
+        },
+        "natRuleCollections": [],
+        "networkRuleCollections": [],
+        "sku": {
+          "name": "AZFW_VNet",
+          "tier": "Standard"
+        },
+        "threatIntelMode": "Alert"
+      },
+      "type": "Microsoft.Network/azureFirewalls",
+      "zones": [
+        "1",
+        "2",
+        "3"
+      ]
+    }
+  ],
+  "variables": {}
+}

@@ -1,0 +1,200 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "azureFirewalls_afw_internet_centralus_name": {
+      "defaultValue": "afw-internet-centralus",
+      "type": "String"
+    },
+    "firewallPolicies_fwpol_internet_centralus_externalid": {
+      "defaultValue": "/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-internet-centralus",
+      "type": "String"
+    },
+    "publicIPAddresses_afw_internet_centralus_pip_name": {
+      "defaultValue": "afw-internet-centralus-pip",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_identity_centralus_externalid": {
+      "defaultValue": "/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_internet_centralus_name": {
+      "defaultValue": "vnet-internet-centralus",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/publicIPAddresses/afw-internet-centralus-pip'.",
+      "location": "centralus",
+      "name": "[parameters('publicIPAddresses_afw_internet_centralus_pip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "52.154.62.158",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/virtualNetworks/vnet-internet-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('virtualNetworks_vnet_internet_centralus_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.96.240.0/20"
+          ]
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "name": "snet-default-internet-centralus",
+            "properties": {
+              "addressPrefix": "10.96.240.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "AzureFirewallSubnet",
+            "properties": {
+              "addressPrefix": "10.96.255.192/26",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "serviceEndpoints": []
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "name": "vnet-identity-centralus",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "peeringState": "Connected",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.96.16.0/20"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[parameters('virtualNetworks_vnet_identity_centralus_externalid')]"
+              },
+              "useRemoteGateways": false
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/virtualNetworks/vnet-internet-centralus/subnets/AzureFirewallSubnet'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_internet_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_internet_centralus_name'), '/AzureFirewallSubnet')]",
+      "properties": {
+        "addressPrefix": "10.96.255.192/26",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/virtualNetworks/vnet-internet-centralus/subnets/snet-default-internet-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_internet_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_internet_centralus_name'), '/snet-default-internet-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.240.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/virtualNetworks/vnet-internet-centralus/virtualNetworkPeerings/vnet-identity-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_internet_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_internet_centralus_name'), '/vnet-identity-centralus')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "peeringState": "Connected",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.96.16.0/20"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[parameters('virtualNetworks_vnet_identity_centralus_externalid')]"
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/azureFirewalls/afw-internet-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_afw_internet_centralus_pip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_internet_centralus_name'), 'AzureFirewallSubnet')]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('azureFirewalls_afw_internet_centralus_name')]",
+      "properties": {
+        "additionalProperties": {},
+        "applicationRuleCollections": [],
+        "firewallPolicy": {
+          "id": "[parameters('firewallPolicies_fwpol_internet_centralus_externalid')]"
+        },
+        "ipConfigurations": [
+          {
+            "name": "[concat(parameters('azureFirewalls_afw_internet_centralus_name'), '-pip')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_afw_internet_centralus_pip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_internet_centralus_name'), 'AzureFirewallSubnet')]"
+              }
+            }
+          }
+        ],
+        "natRuleCollections": [],
+        "networkRuleCollections": [],
+        "sku": {
+          "name": "AZFW_VNet",
+          "tier": "Premium"
+        },
+        "threatIntelMode": "Alert"
+      },
+      "type": "Microsoft.Network/azureFirewalls",
+      "zones": [
+        "1",
+        "2",
+        "3"
+      ]
+    }
+  ],
+  "variables": {}
+}

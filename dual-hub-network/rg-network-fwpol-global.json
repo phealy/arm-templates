@@ -1,0 +1,253 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "firewallPolicies_fwpol_hub_centralus_name": {
+      "defaultValue": "fwpol-hub-centralus",
+      "type": "String"
+    },
+    "firewallPolicies_fwpol_internet_centralus_name": {
+      "defaultValue": "fwpol-internet-centralus",
+      "type": "String"
+    },
+    "firewallPolicies_fwpol_root_global_name": {
+      "defaultValue": "fwpol-root-global",
+      "type": "String"
+    },
+    "ipGroups_ipg_privateaddresses_centralus_externalid": {
+      "defaultValue": "/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/ipGroups/ipg-privateaddresses-centralus",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourcegroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-root-global'.",
+      "location": "eastus",
+      "name": "[parameters('firewallPolicies_fwpol_root_global_name')]",
+      "properties": {
+        "dnsSettings": {
+          "enableProxy": true,
+          "servers": []
+        },
+        "threatIntelMode": "Alert",
+        "threatIntelWhitelist": {
+          "fqdns": [],
+          "ipAddresses": []
+        }
+      },
+      "type": "Microsoft.Network/firewallPolicies"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourcegroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-hub-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicies_fwpol_root_global_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[parameters('firewallPolicies_fwpol_hub_centralus_name')]",
+      "properties": {
+        "basePolicy": {
+          "id": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicies_fwpol_root_global_name'))]"
+        },
+        "dnsSettings": {
+          "enableProxy": true,
+          "servers": [
+            "10.0.25.1"
+          ]
+        },
+        "threatIntelMode": "Alert",
+        "threatIntelWhitelist": {
+          "fqdns": [],
+          "ipAddresses": []
+        }
+      },
+      "type": "Microsoft.Network/firewallPolicies"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourcegroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-internet-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicies_fwpol_root_global_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[parameters('firewallPolicies_fwpol_internet_centralus_name')]",
+      "properties": {
+        "basePolicy": {
+          "id": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicies_fwpol_root_global_name'))]"
+        },
+        "threatIntelMode": "Deny",
+        "threatIntelWhitelist": {
+          "fqdns": [],
+          "ipAddresses": []
+        }
+      },
+      "type": "Microsoft.Network/firewallPolicies"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-root-global/ruleCollectionGroups/DefaultApplicationRuleCollectionGroup'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicies_fwpol_root_global_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[concat(parameters('firewallPolicies_fwpol_root_global_name'), '/DefaultApplicationRuleCollectionGroup')]",
+      "properties": {
+        "priority": 300,
+        "ruleCollections": [
+          {
+            "action": {
+              "type": "Allow"
+            },
+            "name": "os_updates",
+            "priority": 120,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "rules": [
+              {
+                "destinationAddresses": [],
+                "fqdnTags": [
+                  "WindowsUpdate"
+                ],
+                "name": "windows_updates",
+                "protocols": [
+                  {
+                    "port": 80,
+                    "protocolType": "Http"
+                  },
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "ruleType": "ApplicationRule",
+                "sourceAddresses": [],
+                "sourceIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ],
+                "targetFqdns": [],
+                "targetUrls": [],
+                "terminateTLS": false
+              },
+              {
+                "destinationAddresses": [],
+                "fqdnTags": [],
+                "name": "ubuntu_updates",
+                "protocols": [
+                  {
+                    "port": 80,
+                    "protocolType": "Http"
+                  },
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "ruleType": "ApplicationRule",
+                "sourceAddresses": [],
+                "sourceIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ],
+                "targetFqdns": [
+                  "azure.archive.ubuntu.com",
+                  "security.ubuntu.com"
+                ],
+                "targetUrls": [],
+                "terminateTLS": false
+              },
+              {
+                "destinationAddresses": [],
+                "fqdnTags": [],
+                "name": "ifconfig",
+                "protocols": [
+                  {
+                    "port": 80,
+                    "protocolType": "Http"
+                  },
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "ruleType": "ApplicationRule",
+                "sourceAddresses": [],
+                "sourceIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ],
+                "targetFqdns": [
+                  "ifconfig.me"
+                ],
+                "targetUrls": [],
+                "terminateTLS": false
+              }
+            ]
+          }
+        ]
+      },
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourcegroups/rg-network-fwpol-global/providers/Microsoft.Network/firewallPolicies/fwpol-root-global/ruleCollectionGroups/DefaultNetworkRuleCollectionGroup'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicies_fwpol_root_global_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[concat(parameters('firewallPolicies_fwpol_root_global_name'), '/DefaultNetworkRuleCollectionGroup')]",
+      "properties": {
+        "priority": 200,
+        "ruleCollections": [
+          {
+            "action": {
+              "type": "Allow"
+            },
+            "name": "management_rules",
+            "priority": 100,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "rules": [
+              {
+                "destinationAddresses": [],
+                "destinationFqdns": [],
+                "destinationIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ],
+                "destinationPorts": [
+                  "22"
+                ],
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "name": "allow_ssh",
+                "ruleType": "NetworkRule",
+                "sourceAddresses": [],
+                "sourceIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ]
+              },
+              {
+                "destinationAddresses": [],
+                "destinationFqdns": [],
+                "destinationIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ],
+                "destinationPorts": [
+                  "*"
+                ],
+                "ipProtocols": [
+                  "ICMP"
+                ],
+                "name": "ping",
+                "ruleType": "NetworkRule",
+                "sourceAddresses": [],
+                "sourceIpGroups": [
+                  "[parameters('ipGroups_ipg_privateaddresses_centralus_externalid')]"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups"
+    }
+  ],
+  "variables": {}
+}

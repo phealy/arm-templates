@@ -1,0 +1,324 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "routeTables_rt_hubonly_centralus_name": {
+      "defaultValue": "rt-hubonly-centralus",
+      "type": "String"
+    },
+    "routeTables_rt_viafirewall_centralus_name": {
+      "defaultValue": "rt-viafirewall-centralus",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_hub_centralus_externalid": {
+      "defaultValue": "/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-hub-centralus/providers/Microsoft.Network/virtualNetworks/vnet-hub-centralus",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_identity_centralus_name": {
+      "defaultValue": "vnet-identity-centralus",
+      "type": "String"
+    },
+    "virtualNetworks_vnet_internet_centralus_externalid": {
+      "defaultValue": "/subscriptions/2006d617-bee2-430e-8239-c83634af2fef/resourceGroups/rg-network-internet-centralus/providers/Microsoft.Network/virtualNetworks/vnet-internet-centralus",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-hubonly-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('routeTables_rt_hubonly_centralus_name')]",
+      "properties": {
+        "disableBgpRoutePropagation": true,
+        "routes": [
+          {
+            "name": "Default",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/routeTables"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus'.",
+      "location": "centralus",
+      "name": "[parameters('routeTables_rt_viafirewall_centralus_name')]",
+      "properties": {
+        "disableBgpRoutePropagation": true,
+        "routes": [
+          {
+            "name": "Default",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopIpAddress": "10.96.255.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          },
+          {
+            "name": "RFC1918-10",
+            "properties": {
+              "addressPrefix": "10.0.0.0/8",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          },
+          {
+            "name": "RFC1918-172",
+            "properties": {
+              "addressPrefix": "172.16.0.0/12",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          },
+          {
+            "name": "RFC1918-192",
+            "properties": {
+              "addressPrefix": "192.168.0.0/16",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          },
+          {
+            "name": "RFC6598",
+            "properties": {
+              "addressPrefix": "100.64.0.0/10",
+              "nextHopIpAddress": "10.96.3.196",
+              "nextHopType": "VirtualAppliance"
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/routeTables"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-hubonly-centralus/routes/Default'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_hubonly_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_hubonly_centralus_name'), '/Default')]",
+      "properties": {
+        "addressPrefix": "0.0.0.0/0",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus/routes/Default'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_viafirewall_centralus_name'), '/Default')]",
+      "properties": {
+        "addressPrefix": "0.0.0.0/0",
+        "nextHopIpAddress": "10.96.255.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus/routes/RFC1918-10'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_viafirewall_centralus_name'), '/RFC1918-10')]",
+      "properties": {
+        "addressPrefix": "10.0.0.0/8",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus/routes/RFC1918-172'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_viafirewall_centralus_name'), '/RFC1918-172')]",
+      "properties": {
+        "addressPrefix": "172.16.0.0/12",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus/routes/RFC1918-192'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_viafirewall_centralus_name'), '/RFC1918-192')]",
+      "properties": {
+        "addressPrefix": "192.168.0.0/16",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/routeTables/rt-viafirewall-centralus/routes/RFC6598'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('routeTables_rt_viafirewall_centralus_name'), '/RFC6598')]",
+      "properties": {
+        "addressPrefix": "100.64.0.0/10",
+        "nextHopIpAddress": "10.96.3.196",
+        "nextHopType": "VirtualAppliance"
+      },
+      "type": "Microsoft.Network/routeTables/routes"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "location": "centralus",
+      "name": "[parameters('virtualNetworks_vnet_identity_centralus_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.96.16.0/20"
+          ]
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "name": "snet-identity-default-centralus",
+            "properties": {
+              "addressPrefix": "10.96.16.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+              },
+              "serviceEndpoints": []
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "name": "vnet-hub-centralus",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "peeringState": "Connected",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.96.0.0/20"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[parameters('virtualNetworks_vnet_hub_centralus_externalid')]"
+              },
+              "useRemoteGateways": true
+            }
+          },
+          {
+            "name": "vnet-internet-centralus",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "peeringState": "Connected",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.96.240.0/20"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[parameters('virtualNetworks_vnet_internet_centralus_externalid')]"
+              },
+              "useRemoteGateways": false
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus/virtualNetworkPeerings/vnet-hub-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_identity_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_identity_centralus_name'), '/vnet-hub-centralus')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "peeringState": "Connected",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.96.0.0/20"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[parameters('virtualNetworks_vnet_hub_centralus_externalid')]"
+        },
+        "useRemoteGateways": true
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus/virtualNetworkPeerings/vnet-internet-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_identity_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_identity_centralus_name'), '/vnet-internet-centralus')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "peeringState": "Connected",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.96.240.0/20"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[parameters('virtualNetworks_vnet_internet_centralus_externalid')]"
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "comments": "Generalized from resource: '/subscriptions/67c5d322-0f60-4f3a-8c6c-286189738093/resourceGroups/rg-network-identity-centralus/providers/Microsoft.Network/virtualNetworks/vnet-identity-centralus/subnets/snet-identity-default-centralus'.",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_identity_centralus_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_identity_centralus_name'), '/snet-identity-default-centralus')]",
+      "properties": {
+        "addressPrefix": "10.96.16.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_rt_viafirewall_centralus_name'))]"
+        },
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    }
+  ],
+  "variables": {}
+}
